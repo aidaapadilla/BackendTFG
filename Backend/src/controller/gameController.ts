@@ -1,38 +1,25 @@
-import Parking from '../model/Parking';
-import User from '../model/User';
+import Game from '../model/Game';
+import User from '../model/Teacher';
 import { Request, Response } from 'express';
 
 
 const register = async (req: Request, res: Response) => {
 	try {
-		const { email, type, price, size, difficulty,
-			country, city, street, streetNumber, spotNumber } = req.body;
-
+		const { email, runways, windRose, airportCapacity} = req.body;
 		const user1 = await User.findOne({ email });
 		if (!user1) {
 			res.status(400).json({ message: 'User not found',email, user1 });
 		}
-		// const address1 = await Address.findOne({ name: user });
-		// if (!address1) {
-		// 	return res.status(400).json({ message: 'Address not found' });
-		// }
-		const newParking = new Parking({
+		const newGame = new Game({
 			user: user1._id,
-			type,
-			price,
-			size,
-			difficulty,
-			country,
-			city,
-			street,
-			streetNumber,
-			spotNumber
-			// address: address1._id
+			runways,
+			windRose,
+			airportCapacity
 		});
-		await newParking.save().catch(Error);
-		await User.updateOne( // Afegir un parking a myparkings
+		await newGame.save().catch(Error);
+		await User.updateOne( 
 			{ _id: user1 },
-			{ $addToSet: { myParkings: newParking._id } }
+			{ $addToSet: { myGames: newGame._id } }
 		);
 		res.status(200).json({ auth: true });
 	}
@@ -44,14 +31,14 @@ const register = async (req: Request, res: Response) => {
 const cancel = async (req: Request, res: Response) => {
 	try {
 		const _id = req.params.id;
-		const parking = await Parking.findById(_id)
-		if (!parking) {
-			res.status(400).json({ message: 'Parking not found' });
+		const game = await Game.findById(_id)
+		if (!game) {
+			res.status(400).json({ message: 'Game not found' });
 		}
-		await Parking.findByIdAndDelete(_id).catch(Error);
-		await User.updateOne( // Desasociar parking a un usuari
-			{ _id: parking.user },
-			{ $pull: { myParkings: parking._id } }
+		await Game.findByIdAndDelete(_id).catch(Error);
+		await User.updateOne( // Desasociar Game a un usuari
+			{ _id: game.user },
+			{ $pull: { myGames: game._id } }
 		);
 		res.status(200).json({ auth: true });
 	}
@@ -61,8 +48,8 @@ const cancel = async (req: Request, res: Response) => {
 };
 
 const getall = async (req: Request, res: Response) => {
-	const parkings = await Parking.find(); // .populate('user');
-	res.json(parkings);
+	const games = await Parking.find(); // .populate('user');
+	res.json(game);
 };
 
 const getOne = async (req: Request, res: Response) => {

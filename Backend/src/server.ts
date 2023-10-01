@@ -2,14 +2,10 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose, { ConnectOptions } from "mongoose";
 import cors from "cors";
-import User from "./api/User";
-import Booking from "./api/Booking";
-// import Address from "./api/Address";
-import Parking from "./api/Parking";
-import Opinion from "./api/Opinion";
-import Message from "./api/Message";
-import Chat from "./api/Chat";
-import Configuration from "./api/Configuration";
+import Student from "./api/Student";
+import Game from "./api/Game";
+import Teacher from "./api/Teacher";
+
 
 const app = express();
 const port = process.env.PORT || 5432;
@@ -18,21 +14,16 @@ app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json())
 app.use(cors());
 
-app.use('/api/users', User)
-app.use('/api/bookings', Booking)
-app.use('/api/parkings', Parking)
-app.use('/api/config', Configuration)
-// app.use('/api/addresses', Address)
-app.use('/api/opinions', Opinion)
-app.use('/api/messages', Message)
-app.use('/api/chats', Chat)
+app.use('/api/students', Student)
+app.use('/api/games', Game)
+app.use('/api/teachers', Teacher)
 
 
 app.get('/', ( req: express.Request, res: express.Response ) => {
 	res.send('Hello World!')
 })
 
-mongoose.connect('mongodb://localhost/aparcamDB', { useNewUrlParser : true } as ConnectOptions)
+mongoose.connect('mongodb://localhost/TFG_dB', { useNewUrlParser : true } as ConnectOptions)
 	.then(() => {
 		// tslint:disable-next-line:no-console
         app.listen(port, () => console.log("Server corriendo en el puerto " + port));
