@@ -5,10 +5,10 @@ import { Request, Response } from 'express';
 
 const register = async (req: Request, res: Response) => {
 	try {
-		const { email, runways, windRose, airportCapacity} = req.body;
+		const { email, runways, windRose, airportCapacity } = req.body;
 		const user1 = await User.findOne({ email });
 		if (!user1) {
-			res.status(400).json({ message: 'User not found',email, user1 });
+			res.status(400).json({ message: 'Student not found', email, user1 });
 		}
 		const newGame = new Game({
 			user: user1._id,
@@ -17,14 +17,14 @@ const register = async (req: Request, res: Response) => {
 			airportCapacity
 		});
 		await newGame.save().catch(Error);
-		await User.updateOne( 
+		await User.updateOne(
 			{ _id: user1 },
 			{ $addToSet: { myGames: newGame._id } }
 		);
 		res.status(200).json({ auth: true });
 	}
 	catch {
-		res.status(400).json({ message: 'User not found' });
+		res.status(400).json({ message: 'Student not found' });
 	}
 };
 
@@ -64,36 +64,17 @@ const getOne = async (req: Request, res: Response) => {
 
 const update = async (req: Request, res: Response) => {
 	const _id = req.params.id;
-	const { type, price, size, difficulty } = req.body;
+	const { runways, windRose, airportCapacity } = req.body;
 	try {
 		const game = await Game.findByIdAndUpdate(_id, {
-			type,
-			price,
-			size,
-			difficulty
-		}, {new: true});
+			runways,
+			windRose,
+			airportCapacity
+		}, { new: true });
 		return res.json(game);
 	}
 	catch (err) {
 		res.status(400).send({ message: 'Cannot update game', err });
-	}
-}
-
-const updateGame = async (req: Request, res: Response) => {
-	try {
-		const _id = req.params.id;
-		const { country, city, street, streetNumber, spotNumber } = req.body;
-		const game = await Game.findByIdAndUpdate(_id, {
-			country,
-			city,
-			street,
-			streetNumber,
-			spotNumber
-		}, { new: true });
-		res.json(game);
-	}
-	catch (err) {
-		res.status(400).send({ message: 'Cannot update Game address', err });
 	}
 }
 
@@ -102,6 +83,5 @@ export default {
 	cancel,
 	getall,
 	getOne,
-	update,
-	updateGame
+	update
 };

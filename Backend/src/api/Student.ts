@@ -3,13 +3,11 @@ import { Router } from 'express';
 
 const router = Router();
 
-// FALTA VERIFY
-router.post('/register', studentController.register); // OK
-router.post('/login', studentController.login); // OK
-router.get('/:id', studentController.profile); // OK
-router.get('/', studentController.getall);  // OK
-router.put('/forgotpass/:id', studentController.changePass); // OK
-router.put('/update/:id', studentController.update); // OK
-router.delete('/:id', studentController.deleteStudent); // OK
+router.post('/register', studentController.register);
+router.post('/login', studentController.login);
+router.get('/:id', studentController.profile);
+router.get('/', studentController.getall);
+router.put('/update/:id', studentController.update);
+router.delete('/:id', studentController.deleteStudent);
 
 export default router;

@@ -3,11 +3,10 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.post('/', gameController.register); // OK
-router.delete('/:id', gameController.cancel); // OK
-router.get('/', gameController.getall); // OK
-router.put('/update/:id', gameController.update); // OK
-router.put('/updateAddress/:id', gameController.updateGame); // OK
-router.get('/:id',gameController.getOne); // OK
+router.post('/', gameController.register);
+router.delete('/:id', gameController.cancel);
+router.get('/', gameController.getall);
+router.put('/update/:id', gameController.update);
+router.get('/:id', gameController.getOne);
 
 export default router;
