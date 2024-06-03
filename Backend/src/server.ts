@@ -8,9 +8,9 @@ import Teacher from "./api/Teacher";
 
 
 const app = express();
-const port = process.env.PORT || 5432;
+const port = process.env.PORT || 27017;
 
-app.use(bodyParser.urlencoded({ extended : true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 app.use(cors());
 
@@ -19,14 +19,14 @@ app.use('/api/games', Game)
 app.use('/api/teachers', Teacher)
 
 
-app.get('/', ( req: express.Request, res: express.Response ) => {
+app.get('/', (req: express.Request, res: express.Response) => {
 	res.send('Hello World!')
 })
 
-mongoose.connect('mongodb://localhost/TFG_dB', { useNewUrlParser : true } as ConnectOptions)
+mongoose.connect('mongodb://localhost/TFG', { useNewUrlParser: true } as ConnectOptions)
 	.then(() => {
 		// tslint:disable-next-line:no-console
-        app.listen(port, () => console.log("Server corriendo en el puerto " + port));
+		app.listen(port, () => console.log("Server corriendo en el puerto " + port));
 	})
 	.catch((err) => {
 		// tslint:disable-next-line:no-console

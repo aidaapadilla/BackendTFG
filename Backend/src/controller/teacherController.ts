@@ -16,7 +16,7 @@ const register = async (req: Request, res: Response) => {
 	try {
 		await newTeacher.save();
 	}
-	catch(err) {
+	catch (err) {
 		res.status(500).json({ message: 'Could not create Teacher', err });
 	}
 	const token = jwt.sign({ id: newTeacher._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
@@ -25,7 +25,7 @@ const register = async (req: Request, res: Response) => {
 	res.status(200).json({ auth: true, token });
 };
 
-const login = async (req: Request, res : Response) => {
+const login = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
 	try {
 		const teacher = await Teacher.findOne({ email });
@@ -38,43 +38,24 @@ const login = async (req: Request, res : Response) => {
 		});
 		res.json({ auth: true, token });
 	}
-	catch(err) {
+	catch (err) {
 		res.status(404).send('Cant find teacher');
 	}
 };
 
 const profile = async (req: Request, res: Response) => {
 	try {
-		const user = await Teacher.findById(req.params.id, { password: 0 }); 
+		const user = await Teacher.findById(req.params.id, { password: 0 });
 		res.json(user);
 	}
-	catch(err) {
+	catch (err) {
 		return res.status(404).send('The user does not exist');
 	}
 };
 
 const getall = async (req: Request, res: Response) => {
-	const teacher = await Teacher.find(); 
+	const teacher = await Teacher.find();
 	res.json(teacher);
-};
-
-const changePass = async (req: Request, res: Response) => {
-	try {
-		const teacher = await Teacher.findById(req.params.id);
-		if(req.body.password === CryptoJS.AES.decrypt(teacher.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8)){
-			let newpassword = req.body.newpassword;
-			newpassword = CryptoJS.AES.encrypt(newpassword, 'secret key 123').toString();
-			teacher.password = newpassword;
-			await teacher.save();
-			res.json({ status: 'Teacher Updated' });
-		}
-		else{
-			res.json({ status: 'Wrong password' });
-		}
-	}
-	catch(err) {
-		res.status(500).json({ message: 'Teacher not found', err });
-	}
 };
 
 const update = async (req: Request, res: Response) => {
@@ -84,21 +65,21 @@ const update = async (req: Request, res: Response) => {
 		const teacher = await Teacher.findByIdAndUpdate(_id, {
 			name,
 			email
-		}, {new: true});
+		}, { new: true });
 		return res.json(teacher);
 	}
-	catch(err) {
+	catch (err) {
 		res.status(400).json({ message: 'Teacher not found', err });
 	}
 }
 
-const deleteTeacher = async (req: Request, res: Response) =>  {
+const deleteTeacher = async (req: Request, res: Response) => {
 	try {
 		const _id = req.params.id;
 		await Teacher.findByIdAndDelete({ _id });
 		res.status(200).json({ status: 'Teacher deleted' });
 	}
-	catch(err) {
+	catch (err) {
 		res.status(500).json({ message: 'Teacher not found', err });
 	}
 }
@@ -108,7 +89,6 @@ export default {
 	login,
 	profile,
 	getall,
-	changePass,
 	update,
 	deleteTeacher
 };

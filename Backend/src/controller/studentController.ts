@@ -1,4 +1,4 @@
-import Teacher from '../model/Teacher';
+import Student from '../model/Student';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 import { Request, Response } from 'express';
@@ -8,18 +8,18 @@ const register = async (req: Request, res: Response) => {
 	const email = req.body.email;
 	let password = req.body.password;
 	password = CryptoJS.AES.encrypt(password, 'secret key 123').toString();
-	const newTeacher = new Teacher({
+	const newStudent = new Student({
 		name,
 		email,
 		password
 	});
 	try {
-		await newTeacher.save();
+		await newStudent.save();
 	}
 	catch(err) {
-		res.status(500).json({ message: 'Could not create Teacher', err });
+		res.status(500).json({ message: 'Could not create Student', err });
 	}
-	const token = jwt.sign({ id: newTeacher._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+	const token = jwt.sign({ id: newStudent._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
 		expiresIn: 60 * 60 * 24
 	});
 	res.status(200).json({ auth: true, token });
@@ -28,52 +28,52 @@ const register = async (req: Request, res: Response) => {
 const login = async (req: Request, res : Response) => {
 	const { email, password } = req.body;
 	try {
-		const user = await Teacher.findOne({ email });
-		const validPassword = CryptoJS.AES.decrypt(user.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8);
+		const student = await Student.findOne({ email });
+		const validPassword = CryptoJS.AES.decrypt(student.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8);
 		if (validPassword !== password) {
 			return res.status(401).json({ auth: false, token: null });
 		}
-		const token = jwt.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+		const token = jwt.sign({ id: student._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
 			expiresIn: 60 * 60 * 24
 		});
 		res.json({ auth: true, token });
 	}
 	catch(err) {
-		res.status(404).send('Cant find user');
+		res.status(404).send('Cant find student');
 	}
 };
 
 const profile = async (req: Request, res: Response) => {
 	try {
-		const user = await Teacher.findById(req.params.id, { password: 0 }); // .populate('myParkings').populate('myBookings');
-		res.json(user);
+		const student = await Student.findById(req.params.id, { password: 0 }); // .populate('myParkings').populate('myBookings');
+		res.json(student);
 	}
 	catch(err) {
-		return res.status(404).send('The user does not exist');
+		return res.status(404).send('The student does not exist');
 	}
 };
 
 const getall = async (req: Request, res: Response) => {
-	const users = await Teacher.find(); 
-	res.json(users);
+	const students = await Student.find(); 
+	res.json(students);
 };
 
 const changePass = async (req: Request, res: Response) => {
 	try {
-		const user = await Teacher.findById(req.params.id);
-		if(req.body.password === CryptoJS.AES.decrypt(user.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8)){
+		const student = await Student.findById(req.params.id);
+		if(req.body.password === CryptoJS.AES.decrypt(student.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8)){
 			let newpassword = req.body.newpassword;
 			newpassword = CryptoJS.AES.encrypt(newpassword, 'secret key 123').toString();
-			user.password = newpassword;
-			await user.save();
-			res.json({ status: 'User Updated' });
+			student.password = newpassword;
+			await student.save();
+			res.json({ status: 'student Updated' });
 		}
 		else{
 			res.json({ status: 'Wrong password' });
 		}
 	}
 	catch(err) {
-		res.status(500).json({ message: 'User not found', err });
+		res.status(500).json({ message: 'student not found', err });
 	}
 };
 
@@ -81,25 +81,25 @@ const update = async (req: Request, res: Response) => {
 	const _id = req.params.id;
 	const { name, email } = req.body;
 	try {
-		const user = await Teacher.findByIdAndUpdate(_id, {
+		const student = await Student.findByIdAndUpdate(_id, {
 			name,
 			email
 		}, {new: true});
-		return res.json(user);
+		return res.json(student);
 	}
 	catch(err) {
-		res.status(400).json({ message: 'Teacher not found', err });
+		res.status(400).json({ message: 'Student not found', err });
 	}
 }
 
-const deleteTeacher = async (req: Request, res: Response) =>  {
+const deleteStudent = async (req: Request, res: Response) =>  {
 	try {
 		const _id = req.params.id;
-		await Teacher.findByIdAndDelete({ _id });
-		res.status(200).json({ status: 'Teacher deleted' });
+		await Student.findByIdAndDelete({ _id });
+		res.status(200).json({ status: 'Student deleted' });
 	}
 	catch(err) {
-		res.status(500).json({ message: 'Teacher not found', err });
+		res.status(500).json({ message: 'Student not found', err });
 	}
 }
 
@@ -110,5 +110,5 @@ export default {
 	getall,
 	changePass,
 	update,
-	deleteTeacher
+	deleteStudent
 };

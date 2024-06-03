@@ -48,17 +48,17 @@ const cancel = async (req: Request, res: Response) => {
 };
 
 const getall = async (req: Request, res: Response) => {
-	const games = await Parking.find(); // .populate('user');
-	res.json(game);
+	const games = await Game.find(); // .populate('user');
+	res.json(games);
 };
 
 const getOne = async (req: Request, res: Response) => {
 	try {
-		const parking = await Parking.findById(req.params.id);
-		res.json(parking);
+		const game = await Game.findById(req.params.id);
+		res.json(game);
 	}
 	catch (err) {
-		res.status(400).send({ message: 'Parking not found', err });
+		res.status(400).send({ message: 'Game not found', err });
 	}
 }
 
@@ -66,34 +66,34 @@ const update = async (req: Request, res: Response) => {
 	const _id = req.params.id;
 	const { type, price, size, difficulty } = req.body;
 	try {
-		const parking = await Parking.findByIdAndUpdate(_id, {
+		const game = await Game.findByIdAndUpdate(_id, {
 			type,
 			price,
 			size,
 			difficulty
 		}, {new: true});
-		return res.json(parking);
+		return res.json(game);
 	}
 	catch (err) {
-		res.status(400).send({ message: 'Cannot update parking', err });
+		res.status(400).send({ message: 'Cannot update game', err });
 	}
 }
 
-const updateAddress = async (req: Request, res: Response) => {
+const updateGame = async (req: Request, res: Response) => {
 	try {
 		const _id = req.params.id;
 		const { country, city, street, streetNumber, spotNumber } = req.body;
-		const parking = await Parking.findByIdAndUpdate(_id, {
+		const game = await Game.findByIdAndUpdate(_id, {
 			country,
 			city,
 			street,
 			streetNumber,
 			spotNumber
 		}, { new: true });
-		res.json(parking);
+		res.json(game);
 	}
 	catch (err) {
-		res.status(400).send({ message: 'Cannot update parking address', err });
+		res.status(400).send({ message: 'Cannot update Game address', err });
 	}
 }
 
@@ -103,5 +103,5 @@ export default {
 	getall,
 	getOne,
 	update,
-	updateAddress
+	updateGame
 };

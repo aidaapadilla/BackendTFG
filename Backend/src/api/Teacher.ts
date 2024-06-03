@@ -1,15 +1,15 @@
-import userController from '../controller/teacherController';
+import teacherController from '../controller/teacherController';
 import { Router } from 'express';
 
 const router = Router();
 
 // FALTA VERIFY
-router.post('/register', userController.register); // OK
-router.post('/login', userController.login); // OK
-router.get('/:id', userController.profile); // OK
-router.get('/', userController.getall);  // OK
-router.put('/forgotpass/:id', userController.changePass); // OK
-router.put('/update/:id', userController.update); // OK
-router.delete('/:id', userController.deleteUser); // OK
+router.post('/register', teacherController.register); 
+router.post('/login', teacherController.login);
+router.get('/:id', teacherController.profile); 
+router.get('/', teacherController.getall);  
+router.put('/forgotpass/:id', teacherController.changePass); 
+router.put('/update/:id', teacherController.update); 
+router.delete('/:id', teacherController.deleteTeacher); 
 
 export default router;

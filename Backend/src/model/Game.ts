@@ -1,8 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 const Game = new Schema({
-	user: { type: Schema.Types.ObjectId, ref: "User" },
-    runways: [{ type: Schema.Types.ObjectId, ref: "Runway" }],
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     windRose: String,
     airportCapacity: String,
     Location: String,
