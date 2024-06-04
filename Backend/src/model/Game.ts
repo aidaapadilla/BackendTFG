@@ -1,11 +1,20 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
+import { IStudent } from './Student';
 
-const Game = new Schema({
+const GameSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: "User" },
     windRose: String,
     airportCapacity: String,
     Location: String,
-    ReferenceTemperature: Number
+    referenceTemperature: Number
 });
 
-export default model('Game', Game);
+export interface IGame extends Document {
+    user: IStudent;
+    windRose: string;
+    airportCapacity: string;
+    Location: string;
+    referenceTemperature: number;
+}
+
+export default mongoose.model<IGame>('Game', GameSchema);

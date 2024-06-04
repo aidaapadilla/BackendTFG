@@ -1,10 +1,19 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
+import { IStudent } from './Student';
 
-const Teacher = new Schema({
+
+const TeacherSchema = new Schema({
     name: { type: String, required: true },
     password: { type: String, required: true },
-	email: { type: String, unique: true, required: true },
-    myStudents: [{ type: Schema.Types.ObjectId, ref: 'Student'}] // bookings
+    email: { type: String, unique: true, required: true },
+    myStudents: [{ type: Schema.Types.ObjectId, ref: 'Student' }] // bookings
 });
 
-export default model('Teacher', Teacher);
+export interface ITeacher extends Document {
+    name: string;
+    password: string;
+    email: string;
+    myStudents: IStudent[];
+}
+
+export default mongoose.model<ITeacher>('Teacher', TeacherSchema)

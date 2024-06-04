@@ -6,7 +6,7 @@ import { Request, Response } from 'express';
 const register = async (req: Request, res: Response) => {
 	const name = req.body.name;
 	const email = req.body.email;
-	let password = req.body.password;
+	const password = req.body.password;
 	// password = CryptoJS.AES.encrypt(password, 'secret key 123').toString();
 	const newStudent = new Student({
 		name,

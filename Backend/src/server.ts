@@ -22,7 +22,7 @@ app.get('/', (req: express.Request, res: express.Response) => {
 });
 
 mongoose.set('strictQuery', false);  // Configura strictQuery en Mongoose
-const mongoUrl = 'mongodb://127.0.0.1:27017/TFG';  // URL de conexión actualizada
+const mongoUrl = 'mongodb://127.0.0.1/TFG';  // URL de conexión actualizada
 
 mongoose.connect('mongodb://127.0.0.1/TFG', { useNewUrlParser: true } as ConnectOptions)
 	.then(() => {
