@@ -7,7 +7,7 @@ const register = async (req: Request, res: Response) => {
 	const name = req.body.name;
 	const email = req.body.email;
 	let password = req.body.password;
-	password = CryptoJS.AES.encrypt(password, 'secret key 123').toString();
+	// password = CryptoJS.AES.encrypt(password, 'secret key 123').toString();
 	const newStudent = new Student({
 		name,
 		email,
@@ -26,7 +26,8 @@ const login = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
 	try {
 		const student = await Student.findOne({ email });
-		const validPassword = CryptoJS.AES.decrypt(student.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8);
+		const validPassword = await Student.findOne({ password });
+		// const validPassword = CryptoJS.AES.decrypt(student.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8);
 		if (validPassword !== password) {
 			return res.status(401).json({ auth: false });
 		}
