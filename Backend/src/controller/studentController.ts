@@ -2,19 +2,26 @@ import Student from '../model/Student';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 import { Request, Response } from 'express';
+import Teacher from '../model/Teacher';
 
 const register = async (req: Request, res: Response) => {
-	const name = req.body.name;
-	const email = req.body.email;
-	const password = req.body.password;
+	const { name, email, password, id_teacher } = req.body;
+	const teacher = Teacher.findById({ id_teacher });
+
 	// password = CryptoJS.AES.encrypt(password, 'secret key 123').toString();
 	const newStudent = new Student({
 		name,
 		email,
-		password
+		password,
+		id_teacher
 	});
 	try {
 		await newStudent.save();
+		await teacher.updateOne(
+			{ _id: id_teacher },
+			{ $addToSet: { myStudents: newStudent._id } }
+		);
+		res.status(200).json({ auth: true });
 	}
 	catch (err) {
 		res.status(500).json({ message: 'Could not create Student', err });
@@ -26,9 +33,9 @@ const login = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
 	try {
 		const student = await Student.findOne({ email });
-		const validPassword = await Student.findOne({ password });
+		// const validPassword = await Student.findOne({ password });
 		// const validPassword = CryptoJS.AES.decrypt(student.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8);
-		if (validPassword !== password) {
+		if (student.password !== password) {
 			return res.status(401).json({ auth: false });
 		}
 		res.json({ auth: true });

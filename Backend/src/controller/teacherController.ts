@@ -2,12 +2,13 @@ import Teacher from '../model/Teacher';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 import { Request, Response } from 'express';
+import Student from '../model/Student';
 
 const register = async (req: Request, res: Response) => {
 	const name = req.body.name;
 	const email = req.body.email;
-	let password = req.body.password;
-	password = CryptoJS.AES.encrypt(password, 'secret key 123').toString();
+	const password = req.body.password;
+	// password = CryptoJS.AES.encrypt(password, 'secret key 123').toString();
 	const newTeacher = new Teacher({
 		name,
 		email,
@@ -19,18 +20,18 @@ const register = async (req: Request, res: Response) => {
 	catch (err) {
 		res.status(500).json({ message: 'Could not create Teacher', err });
 	}
-	const token = jwt.sign({ id: newTeacher._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
-		expiresIn: 60 * 60 * 24
-	});
-	res.status(200).json({ auth: true, token });
+	// const token = jwt.sign({ id: newTeacher._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+	// 	expiresIn: 60 * 60 * 24
+	// });
+	res.status(200).json({ auth: true });
 };
 
 const login = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
 	try {
 		const teacher = await Teacher.findOne({ email });
-		const validPassword = CryptoJS.AES.decrypt(teacher.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8);
-		if (validPassword !== password) {
+		// const validPassword = CryptoJS.AES.decrypt(teacher.password as string, 'secret key 123').toString(CryptoJS.enc.Utf8);
+		if (teacher.password !== password) {
 			return res.status(401).json({ auth: false, token: null });
 		}
 		const token = jwt.sign({ id: teacher._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
@@ -52,6 +53,16 @@ const profile = async (req: Request, res: Response) => {
 		return res.status(404).send('The user does not exist');
 	}
 };
+const getOneByEmail = async (req: Request, res: Response) => {
+	try {
+		const { email } = req.body;
+		const teacher = await Teacher.findOne({ email });
+		res.json(teacher._id);
+	}
+	catch (err) {
+		return res.status(404).send('The user does not exist');
+	}
+}
 
 const getall = async (req: Request, res: Response) => {
 	const teacher = await Teacher.find();
@@ -84,11 +95,32 @@ const deleteTeacher = async (req: Request, res: Response) => {
 	}
 }
 
+const getAllStudents = async (req: Request, res: Response) => {
+	try {
+		const _id = req.params.id;
+		const teacher = await Teacher.findById({ _id })
+
+		if (!teacher) {
+			return res.status(404).json({ message: 'Teacher not found' });
+		}
+
+		const studentIds = teacher.myStudents;
+		const studentDetails = await Student.find({ _id: { $in: studentIds } });
+
+		res.status(200).json(studentDetails);
+	}
+	catch (err) {
+		res.status(500).json({ message: 'Teacher not found', err });
+	}
+}
+
 export default {
 	register,
 	login,
 	profile,
 	getall,
 	update,
-	deleteTeacher
+	deleteTeacher,
+	getAllStudents,
+	getOneByEmail
 };
